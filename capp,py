@@ -1,0 +1,431 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+"""
+Created on Wed Mar 25 02:31:37 2020
+
+@author: piyus
+"""
+
+import numpy as np
+from flask import Flask, request, jsonify, render_template
+import pickle
+dpe=[]
+final_features=[]
+sequence=""
+dp_features=[]
+dpe=[]
+
+app = Flask(__name__)
+model = pickle.load(open('SVM_model.pkl', 'rb'))
+model_2=pickle.load(open('SVMmodel_DP.pkl','rb'))
+
+import os
+from flask import Flask, request, redirect, url_for, render_template, send_from_directory
+from werkzeug.utils import secure_filename
+#from PyPDF2 import PdfFileReader, PdfFileWriter
+
+UPLOAD_FOLDER = os.path.dirname(os.path.abspath(__file__)) + '/uploads/'
+#DOWNLOAD_FOLDER = os.path.dirname(os.path.abspath(__file__)) + '/downloads/'
+ALLOWED_EXTENSIONS = {'fasta', 'txt'}
+
+app = Flask(__name__, static_url_path="/static")
+DIR_PATH = os.path.dirname(os.path.realpath(__file__))
+app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+#app.config['DOWNLOAD_FOLDER'] = DOWNLOAD_FOLDER
+# limit upload size upto 8mb
+app.config['MAX_CONTENT_LENGTH'] = 5 * 1024 * 1024
+
+@app.route('/')
+def home():
+    return render_template('home.html')
+
+@app.route('/predictor/')
+def predictor():
+    return render_template('predictor.html')
+
+@app.route('/about/')
+def about():
+    return render_template('contact.html')
+
+@app.route('/comparison/')
+def comparison():
+    return render_template('comparison.html')
+
+
+
+@app.route('/predict',methods=['POST'])
+def predict():
+    '''
+    For rendering results on HTML GUI
+    '''
+    #int_features = [int(x) for x in request.form.values()]
+    #final_features = [np.array(int_features)]
+    dp_features=[]
+    fh=[]
+    gh=request.form.get("sequence")
+    #gh=request.form['sequence']
+    gh=gh.strip(' \t\n')
+    if gh:
+        xh=gh + "\n"
+        xh=xh + '\n'
+        xh = xh.replace("\r","")
+        xh = xh.replace("', '","")
+        fh=xh.splitlines(True)
+#print(fh)
+        z=[]
+        bale=[]
+        x=[]
+        seq = []
+        dictiona = {}
+        dp=[]
+        dpe=[]
+        j = 0
+        lr=[]
+        seq_string = ''
+        if not fh[0].startswith(">"):
+
+            return render_template('predictor.html', prediction_text='Invalid format or header missing ')
+
+
+        for i,line in enumerate(fh):
+            if '>' in line:
+                header = line
+                header = header[:-1]
+                j = j + 1
+		#print(header)
+            else:
+                if line.startswith("\n")==True:
+                    dictiona[j] = [header,seq_string]
+                    seq_string = seq_string[:-2]
+                    seq_string=''
+
+                else:
+                    line = line[:-1]
+                    seq_string = seq_string  + line
+
+        m=j
+        kratikal=[]
+        for k, v in dictiona.items():
+            bale.append(v[1])
+            kratikal.append(v[0])
+        dp=["A","R","N","D","C","Q","E","G","H","I","L","K","M","F","P","S","T","W","Y","V"]
+        for i in range(0,len(dp)):
+            for j in range(0,len(dp)):
+                list1=dp[i]+ dp[j]
+                dpe.append(list1)
+        for idx,var in enumerate(bale):
+            for i in dpe:
+                lr.append(var.count(i)/(len(var)))
+        ck=[]
+        for idx,var in enumerate(bale):
+            for i in dp:
+                ck.append(var.count(i)/len(var))
+        g=0
+        c=20
+        e=400
+        b=0
+        cv=[]
+        vc=[]
+        for vrx in range(0,m,1):
+            vc.insert(vrx,lr[g:e])
+            g=e
+            e=e+400
+        for crx in range(0,m,1):
+            cv.insert(vrx,ck[b:c])
+            b=c
+            c=c+20
+
+
+    #prediction_aa=[]
+    #prediction_dp=[]
+        model = pickle.load(open('SVM_model.pkl', 'rb'))
+        model_2=pickle.load(open('SVMmodel_DP.pkl','rb'))
+        acc=0
+        dpc=0
+        manu=[]
+        mj=[]
+        for gno in range(0,m,1):
+            acc=model.predict([cv[gno]])
+            dpc=model_2.predict([vc[gno]])
+            manu.append(acc)
+            mj.append(dpc)
+        str=[]
+        for mp in range(0, len(manu),1):
+            if manu[mp]==0 and mj[mp]==0:
+                str.append(("Is an Expansin protein sequence"))
+            if manu[mp]==1 and mj[mp]==1:
+                str.append(("Is NOT an Expansin protein sequence"))
+            if manu[mp]==1 and mj[mp]==0:
+                str.append(("Could be an Expansin protein sequence"))
+            if manu[mp]==0 and mj[mp]==1:
+                str.append(("Could be an Expansin protein sequence"))
+    #return render_template('index.html', prediction_text='The analysis reveals that $ {}'.format(str))
+        return render_template("show.html", data=str, varchar=kratikal)
+
+
+
+
+
+
+
+        #return render_template('index.html', prediction_text='Is an Expansin sequence $ {}'.format(prediction))
+
+#print(vc)
+
+
+
+
+
+    #print(var)
+
+
+
+#print(*dpe, sep=",")
+
+#print(lr[400: ])
+#print(len(lr))
+
+
+#print(ck[20: ])
+
+
+
+
+
+
+
+
+
+
+			#print("Break")
+
+
+			#print("line")
+			#print(line)
+
+
+
+
+
+
+
+
+
+    #sequence = sequence.upper()
+    #sequence.replace("\n","")
+    #if len(sequence)<=15:
+        #return render_template('index.html', prediction_text='Invalid Sequence as length is short ')
+
+
+
+
+
+
+
+
+
+
+
+
+
+    #return render_template('index.html', prediction_text='Employee Salary should be $ {}'.format(output))
+
+
+
+
+
+
+
+def allowed_file(filename):
+    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+
+
+@app.route('/submit', methods=['GET', 'POST'])
+def submit():
+    if request.method == 'POST':
+        if 'file' not in request.files:
+            #print('No file attached in request')
+            return render_template('predictor.html')
+            return redirect(request.url)
+        file = request.files['file']
+        if file.filename == '':
+            #flash('No selected file')
+            return render_template('predictor.html')
+            return redirect(request.url)
+        if file and allowed_file(file.filename):
+            filename = secure_filename(file.filename)
+            file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+            data,varchar=process_file(os.path.join(app.config['UPLOAD_FOLDER'], filename), filename)
+            #return redirect(url_for('uploaded_file', filename=filename))
+    #return render_template('predictor.html')
+    return render_template("show.html", data=data, varchar=varchar)
+
+
+
+def process_file(path, filename):
+
+     import pickle
+     #with open(path, 'a') as f:
+        #f.write("\n>")
+     #with open(path, 'r') as g:
+        #fh=g.read()
+     #with open(path, 'rb') as fh:
+     #h=open(path,"a")
+     #fh=open(path,"r")
+     #vc=""
+     #for i in fh:
+         #vc=vc+i
+     #h.write(vc.strip())
+
+
+
+     #h.write("\n>")
+     #h.close()
+     import pickle
+     from Bio.SeqIO.FastaIO import SimpleFastaParser
+     from Bio import pairwise2
+     from Bio import SeqIO
+
+     fh=open(path,"r")
+     dpe=[]
+     final_features=[]
+     sequence=""
+     dp_features=[]
+     dpe=[]
+        #h=open("seqdump.fasta","a")
+     z=[]
+     bale=[]
+     x=[]
+     seq = []
+     dictiona = {}
+     dp=[]
+     dpe=[]
+     j = 0
+     lr=[]
+     #seq_string = ''
+     #for i,line in enumerate(fh):
+         #if '>' in line:
+             #header = line
+             #header = header[:-1]
+             #j = j + 1
+         #else:
+
+
+            #if (line == '\n'):
+
+                #dictiona[j] = [header,seq_string]
+                #seq_string = seq_string[:-1]
+                #seq_string=''
+            #if '\n' in line:
+                #line = line[:-1]
+                #seq_string = seq_string  + line
+     #m=j
+     #kratikal=[]
+     #for k, v in dictiona.items():
+         #bale.append(v[1])
+         #kratikal.append(v[0])
+     kratikal=[]
+     count = 0
+     total_len = 0
+     x=[]
+     y=[]
+     with open(path, 'r') as in_handle:
+         for title, seq in SimpleFastaParser(in_handle):
+             count += 1
+             bale.append(seq)
+             kratikal.append(title)
+             total_len += len(seq)
+     m=len(kratikal)+1
+     #cnn=""
+     #cnn=cnn.join(bale)
+     #h=open(path,"a")
+     #h.write(cnn)
+     #h.close()
+     #kratikal=kratikal
+     dp=["A","R","N","D","C","Q","E","G","H","I","L","K","M","F","P","S","T","W","Y","V"]
+     for i in range(0,len(dp)):
+         for j in range(0,len(dp)):
+             list1=dp[i]+ dp[j]
+             dpe.append(list1)
+#print(dpe)
+     for idx,var in enumerate(bale):
+         for i in dpe:
+             lr.append(var.count(i)/(len(var)))
+     ck=[]
+     for idx,var in enumerate(bale):
+         for i in dp:
+             ck.append(var.count(i)/len(var))
+     #cbs=""
+     #cbs=cbs.join(lr)
+
+     #h=open(path,"a")
+     #h.write(cbs)
+     #h.close()
+     g=0
+     c=20
+     e=400
+     b=0
+     cv=[]
+     vc=[]
+     for vrx in range(0,m,1):
+         vc.insert(vrx,lr[g:e])
+         g=e
+         e=e+400
+#print(vrx)
+     for crx in range(0,m,1):
+         cv.insert(vrx,ck[b:c])
+         b=c
+         c=c+20
+     model = pickle.load(open('SVM_model.pkl', 'rb'))
+     model_2=pickle.load(open('SVMmodel_DP.pkl','rb'))
+     acc=0
+     dpc=0
+     manu=[]
+     mj=[]
+     for gno in range(0,m-1,1):
+         acc=model.predict([cv[gno]])
+         dpc=model_2.predict([vc[gno]])
+         manu.append(acc)
+         mj.append(dpc)
+     #ani=""
+     #ani=ani.join(mj)
+     #h=open(path,"a")
+     #h.write(ani)
+     #h.close()
+#print(manu)
+#print(mj)
+     str=[]
+     for mp in range(0, len(manu),1):
+         if manu[mp]==0 and mj[mp]==0:
+             str.append(("Is an Expansin protein sequence"))
+         if manu[mp]==1 and mj[mp]==1:
+             str.append(("Is NOT an Expansin protein sequence"))
+         if manu[mp]==1 and mj[mp]==0:
+             str.append(("Could be an Expansin protein sequence"))
+         if manu[mp]==0 and mj[mp]==1:
+             str.append(("Could be an Expansin protein sequence"))
+     #tvn=""
+     #tvn=tvn.join(str)
+     #h=open(path,"a")
+     #h.write(tvn)
+     #h.close()
+     return(str,kratikal)
+     #return render_template("show.html", data=str, varchar=kratikal)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+if __name__ == "__main__":
+    app.run(debug=True)
+
+

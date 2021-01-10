@@ -1,0 +1,35 @@
+{% extends "layout.html" %}
+{% block content %}
+  <div>
+      <h3 align="center"><b>Instructions</b></h2>
+      <h2 align="center"><b>1) Please input sequences in fasta format or upload as (.fasta)</b></h2>
+      <h2 align="center"><b>2) Please input protein sequences with header line, check example shown in the text box</b></h2>
+      <h2 align="center"><b>3) For multiple protein sequences, make sure there is an enter character after every sequence</b></h2>
+    <form input type="hidden" name="myform" value="text_entry_form" action="{{ url_for('predict')}}"method="post" >
+	<textarea type ="text" name="sequence" rows="20" cols="120" placeholder="Example- >SEC57442.1 Peptidoglycan-binding domain-containing protein, expansin [Amycolatopsis tolypomycina]
+MSGRRRAVLAAVVAVLAVAATVGVLGAAGADGAATTRADAAVIEPAVIAPPATTTPVTSSSARATPSTAE
+PAPVAAPLTGRIEPGATHSGVATFYDTDGTGACGFDASPDPLNAAMNVADFEGSQACGAYVLVQAAGGAS
+VTVRITNLCPAPCRVGQLDLSPKAFDRLGARNLGEIPVTWKLVSPPTTAKISLRYKDGSSRYWCGIQVIG
+HRNPVARLEVRAGSTWKRLPRTDYNYFLAENGAGCGGAVAITDVYGERLVVDPLPVKPGAGQPTSLQFAQ
+R
+
+>PNX76351.1 expansin [Trifolium pratense]
+MTFPLGALVTSSLLFLVAFSLPNVHSINSSWKHAAHNIIGPSNPISTPKHHRRSFLAGPWKKAQATFYEG
+GSGTFGGACGYEDVVKDGYGLDTVALSTVLFNKGLACGACYEIKCMDSPQGCKPGQPSLLVTATDLCPPN
+YALPSDNGGWCNPPREHFDLAKPAYEKIADCKAGIVPVQYRRVPCKRQGGIRFTITGNPYFNLIKVSNVG
+GSGDVVGVQVKGEGQLKWTDLKRNWGQRWETNAMLSGETLTFRVTTSDGRCTTSEAVAPKGWQFGQTFVG
+KNLA
+" required></textarea>
+	<br>
+        <br>
+	<input type="submit" name="myform" value="Predict">
+</form>
+<br>
+<br>
+<form input type="hidden" name="form" value="file_upload_form" action="/submit" method="post" enctype="multipart/form-data">
+	<p><input type="file" name= "file" accept=".fasta">
+	<input type=submit  name="myform" value=Upload >
+</form>
+  </div>
+{% endblock %}
+

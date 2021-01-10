@@ -1,0 +1,19 @@
+{% extends "layout.html" %}
+{% block content %}
+   <div class="columns features">
+    <div class="one-third first">
+      <h3><b>Why Expansin?</b></h3>
+      <p>These are the proteins that are localized in the cell wall and are highly conserved. They are believed to play an important role in cell wall plasticity, it is important whenever plant cells expand or differentiate.</p>
+    </div>
+    <div class="one-third">
+      <h3><b>Why ML?</b></h3>
+      <p>Conventional method i.e. sequence comparison method fail whenever we have diverse data sets as their accuracy drops considerably. As our dataset is quite diverse, we have employed machine learning based model. The method used for classification is SVM</p>
+    </div>
+    <div class="one-third">
+      <h3><b>Why this Server?</b></h3>
+      <p>Sequence based information has been used to build a machine learning model with several features such amino acid composition and dipeptide composition.The model used to classify has an accuracy of <b>94%</b>. Click on  <a  href="{{ url_for('predictor') }}" class="active"><b>Predictor</b></a></p>
+    </div>
+
+{% endblock %}
+
+

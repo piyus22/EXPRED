@@ -1,0 +1,61 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<title>EXPRED</title>
+<meta charset="utf-8">
+<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles/style.css') }}">
+</head>
+<style>
+    #video {
+        content:"";
+	    display:block;
+	    min-height:300px;
+	    width:100%;
+	    text-align:center;
+	    box-shadow:inset 0 -1px 5px rgba(0,0,0,0.6);
+        background:url("{{ url_for('static', filename='images/bgwork.jpg') }}");
+        background-size:cover;
+}
+
+</style>
+<body>
+<header>
+  <nav class="main-nav">
+  </nav>
+</header>
+<section id="video" class="home">
+  <h1><b>EXPRED</b></h1>
+</section>
+<section id="main-content">
+  <div class="text-intro">
+    <h2><b>Expansin Protein Predictor</b></h2>
+  </div>
+  <p><b> Currently Choose file option is not working, kindly upload fasta sequence in the text box</b></p>
+  <div>
+    <form action="{{ url_for('predict')}}"method="post">
+      <textarea type ="text" name="sequence"  rows="20" cols="115" placeholder=" INPUT- FASTA sequence,
+      eg- >SEC57442.1 Peptidoglycan-binding domain-containing protein, expansin [Amycolatopsis tolypomycina]
+MSGRRRAVLAAVVAVLAVAATVGVLGAAGADGAATTRADAAVIEPAVIAPPATTTPVTSSSARATPSTAE
+PAPVAAPLTGRIEPGATHSGVATFYDTDGTGACGFDASPDPLNAAMNVADFEGSQACGAYVLVQAAGGAS
+VTVRITNLCPAPCRVGQLDLSPKAFDRLGARNLGEIPVTWKLVSPPTTAKISLRYKDGSSRYWCGIQVIG
+HRNPVARLEVRAGSTWKRLPRTDYNYFLAENGAGCGGAVAITDVYGERLVVDPLPVKPGAGQPTSLQFAQ
+R
+" required="required"></textarea> <br><br>
+      <button type="submit" class="btn btn-primary btn-block btn-large">Predict</button>
+    </form>
+    <br>
+    <form action="{{ url_for('predict')}}"method="post">
+      <input type="file" name="file" >
+      <button type="submit" class="btn btn-primary btn-block btn-large">Submit</button>
+    </form>
+
+
+  </div>
+</section>
+<br>
+<br>
+<footer>
+  <div class="copyright" align="center"><small>Copyright. All Rights Reserved | by <b>EXPRED team</b>.</small></div>
+</footer>
+</body>
+</html>
